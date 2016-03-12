@@ -181,7 +181,7 @@ Here are a few code examples:
     device.allocateMemory(allocateInfo, vk::AllocationCallbacks::null());
 
   }
-  catch (vk::Exception e)
+  catch (std::system_error e)
   {
     std::cerr << "Vulkan failure: " << e.what() << std::endl;
   }
