@@ -225,7 +225,7 @@ std::string const optionalClassHeader = (
 "\n"
 "  private:\n"
 "    Optional(std::nullptr_t) { m_ptr = nullptr; }\n"
-"    friend typename RefType;\n"
+"    friend RefType;\n"
 "    RefType *m_ptr;\n"
 "  };\n"
 "\n"
