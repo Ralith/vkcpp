@@ -75,7 +75,7 @@ const std::string exceptionHeader(
   "  {\n"
   "    public:\n"
   "    virtual const char* name() const noexcept override { return \"vk::Result\"; }\n"
-  "    virtual std::string message(int ev) const override { return getString(static_cast<vk::Result>(ev)); }\n"
+  "    virtual std::string message(int ev) const override { return to_string(static_cast<vk::Result>(ev)); }\n"
   "  };\n"
   "\n"
   "#if defined(_MSC_VER) && (_MSC_VER == 1800)\n"
@@ -2290,10 +2290,10 @@ void writeTypeEnum( std::ofstream & ofs, DependencyData const& dependencyData, E
   ofs << std::endl;
 }
 
-void writeEnumGetString(std::ofstream & ofs, DependencyData const& dependencyData, EnumData const& enumData)
+void writeEnumTo_String(std::ofstream & ofs, DependencyData const& dependencyData, EnumData const& enumData)
 {
   enterProtect(ofs, enumData.protect);
-  ofs << "  inline std::string getString(" << dependencyData.name << (enumData.members.empty() ? ")" : " value)") << std::endl
+  ofs << "  inline std::string to_string(" << dependencyData.name << (enumData.members.empty() ? ")" : " value)") << std::endl
       << "  {" << std::endl;
   if (enumData.members.empty())
   {
@@ -2315,11 +2315,11 @@ void writeEnumGetString(std::ofstream & ofs, DependencyData const& dependencyDat
   ofs << std::endl;
 }
 
-void writeFlagsGetString(std::ofstream & ofs, DependencyData const& dependencyData, EnumData const &enumData)
+void writeFlagsTo_String(std::ofstream & ofs, DependencyData const& dependencyData, EnumData const &enumData)
 {
   enterProtect(ofs, enumData.protect);
   std::string enumPrefix = "vk::" + *dependencyData.dependencies.begin() + "::";
-  ofs << "  inline std::string getString(" << dependencyData.name << (enumData.members.empty() ? ")" : " value)") << std::endl
+  ofs << "  inline std::string to_string(" << dependencyData.name << (enumData.members.empty() ? ")" : " value)") << std::endl
       << "  {" << std::endl;
   if (enumData.members.empty())
   {
@@ -2349,10 +2349,10 @@ void writeEnumsToString(std::ofstream & ofs, std::vector<DependencyData> const& 
     {
     case DependencyData::Category::ENUM:
       assert(enums.find(it->name) != enums.end());
-      writeEnumGetString(ofs, *it, enums.find(it->name)->second);
+      writeEnumTo_String(ofs, *it, enums.find(it->name)->second);
       break;
     case DependencyData::Category::FLAGS:
-        writeFlagsGetString(ofs, *it, enums.find(*it->dependencies.begin())->second);
+        writeFlagsTo_String(ofs, *it, enums.find(*it->dependencies.begin())->second);
       break;
     }
   }
@@ -2754,7 +2754,7 @@ int main( int argc, char **argv )
   std::vector<DependencyData>::const_iterator it = std::find_if(sortedDependencies.begin(), sortedDependencies.end(), [](DependencyData const& dp) { return dp.name == "Result"; });
   assert(it != sortedDependencies.end());
   writeTypeEnum(ofs, *it, enums.find(it->name)->second);
-  writeEnumGetString(ofs, *it, enums.find(it->name)->second);
+  writeEnumTo_String(ofs, *it, enums.find(it->name)->second);
   sortedDependencies.erase(it);
   ofs << exceptionHeader;
 
