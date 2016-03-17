@@ -1881,7 +1881,7 @@ void writeFunctionHeader(std::ofstream & ofs, std::string const& indentation, st
             if (commandData.arguments[i].optional)
             {
               type[pos] = ' ';
-              type = "vk::Optional<" + trimEnd(type) + "> const &";
+              type = "vk::Optional<" + trimEnd(type) + ">";
             }
             else
             {
